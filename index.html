@@ -113,6 +113,7 @@ tr:hover td{background:rgba(46,125,84,.04)}
 
 <script>
 const CLR={"Hvidovre":"#1A4D2E","Brøndby":"#C0392B","Rødovre":"#C9973A","Ballerup":"#2E7D54","Gladsaxe":"#7B5EA7","Herlev":"#E8C06A"};
+const CLR_LYS={"Hvidovre":"#8FBAA0","Brøndby":"#E89080","Rødovre":"#E8C996","Ballerup":"#7FB892","Gladsaxe":"#B898D4","Herlev":"#F2D896"};
 const ALL=["Hvidovre","Brøndby","Rødovre","Ballerup","Gladsaxe","Herlev"];
 const ALL_LABELS=["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Aug","Sep","Okt","Nov","Dec","Jan","Feb","Mar"];
 
@@ -157,20 +158,19 @@ const d=RAW[k];
 ds.push({
 label:k+" 2025",
 data:idx2025.map(i=>d[i]),
-backgroundColor:CLR[k]+"99",
+backgroundColor:CLR_LYS[k],
 borderColor:CLR[k],
-borderWidth:k==="Hvidovre"?2:1,
-order:k==="Hvidovre"?1:2,
+borderWidth:1,
 barPercentage:.9,
-categoryPercentage:.8
+categoryPercentage:.8,
+borderDash:[2,2]
 });
 ds.push({
 label:k+" 2026",
 data:idx2026.map(i=>d[i]),
 backgroundColor:CLR[k],
-borderColor:CLR[k],
-borderWidth:k==="Hvidovre"?3:2,
-order:k==="Hvidovre"?1:2,
+borderColor:"#1C1C1A",
+borderWidth:k==="Hvidovre"?2:1,
 barPercentage:.9,
 categoryPercentage:.8
 });
