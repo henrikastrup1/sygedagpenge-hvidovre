@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sygedagpenge Hvidovre 2026</title>
+<title>Sygedagpenge Hvidovre 2025–2026</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
@@ -20,13 +20,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .header h1 em{color:var(--gold-lite);font-style:italic}
 .header .sub{font-size:13px;color:rgba(255,255,255,.6);margin-top:6px}
 .toolbar{display:flex;align-items:center;gap:8px;padding:10px 0;margin-bottom:16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
-.toolbar .btn{font-size:13px;padding:5px 14px;background:transparent;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text);transition:all .2s;font-family:'DM Sans',sans-serif}
+.toolbar .btn{font-family:'DM Sans',sans-serif;font-size:13px;padding:5px 14px;background:transparent;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text);transition:all .2s}
 .toolbar .btn:hover{border-color:var(--green);color:var(--green)}
 .toolbar .date{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--muted);margin-left:auto;white-space:nowrap}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
 .card h2{font-family:'DM Serif Display',serif;font-size:18px;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .card h2 .hint{font-family:'DM Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg);padding:2px 8px;border-radius:4px;font-weight:400}
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px}
+.chart-box{height:400px;margin:10px 0}
+
+/* Clickable badges */
+.kom-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.kom-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:2px solid;transition:all .2s;user-select:none;font-family:'DM Sans',sans-serif}
+.kom-badge:hover{opacity:.8;transform:translateY(-1px)}
+.kom-badge .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.kom-badge .check{font-size:11px;transition:transform .2s}
+.kom-badge.hidden{opacity:.3;background:transparent!important;border-color:var(--border)!important;color:var(--muted)!important}
+.kom-badge.hidden .check{transform:scale(.7)}
+.kom-badge.locked::after{content:"";font-size:10px;margin-left:2px}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
 .kpi-card{background:var(--card);border-left:4px solid var(--green);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
 .kpi-card.gld{border-color:var(--gold)}
 .kpi-card.red{border-color:var(--red)}
@@ -36,40 +49,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .kpi-card .change{font-size:12px;margin-top:2px;font-weight:500}
 .kpi-card .change.down{color:var(--green)}
 .kpi-card .change.up{color:var(--red)}
-.chart-box{height:350px;margin:10px 0}
 
-/* Clickable kommune badges */
-.kom-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.kom-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:2px solid;transition:all .2s;user-select:none;font-family:'DM Sans',sans-serif}
-.kom-badge:hover{opacity:.85}
-.kom-badge .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.kom-badge .check{font-size:11px;transition:transform .2s}
-.kom-badge.hidden{opacity:.35;background:transparent!important;border-color:var(--border)!important;color:var(--muted)!important}
-.kom-badge.hidden .check{transform:scale(.7)}
-
-/* Tabel */
-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
-th{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:8px 12px;text-align:right;border-bottom:2px solid var(--border);white-space:nowrap}
-td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums}
-th:first-child,td:first-child{text-align:left}
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+th{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 8px;text-align:right;border-bottom:2px solid var(--border);white-space:nowrap}
+td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card)}
+td:first-child{font-weight:500}
 tr:hover td{background:rgba(46,125,84,.04)}
 .highlight{background:rgba(46,125,84,.06)!important}
-.highlight td:first-child::after{content:" ★";color:var(--gold);font-size:11px}
 .pos{color:var(--green);font-weight:500}
 .neg{color:var(--red);font-weight:500}
+.click-hint{font-size:12px;color:var(--muted);margin-bottom:8px}
 .footer{text-align:center;padding:20px 0;font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:16px}
 .footer a{color:var(--green);text-decoration:none}
-
-/* Underretning om click-to-toggle */
-.click-hint{font-size:12px;color:var(--muted);margin-bottom:8px;font-family:'DM Sans',sans-serif}
+.insight{border-left:4px solid var(--green);background:rgba(46,125,84,.05);border-radius:var(--radius);padding:14px 18px;margin-top:12px;display:flex;gap:12px;align-items:flex-start}
+.insight.gld{border-color:var(--gold);background:rgba(201,151,58,.06)}
+.insight .i-icon{font-size:18px;flex-shrink:0;line-height:1.3}
+.insight .i-title{font-weight:600;font-size:13px;margin-bottom:2px}
+.insight .i-body{font-size:12px;color:var(--mid);line-height:1.5}
 </style>
 </head>
 <body>
 <div class="header">
 <div class="header-inner">
-<div class="eyebrow">Jobindsats · Y07A02</div>
-<h1>Sygedagpengemodtagere <em>2026</em></h1>
-<div class="sub">Fuldtidspersoner · Hvidovre + 5 benchmark-kommuner · Seneste data: marts 2026</div>
+<div class="eyebrow">Jobindsats · Y07A02 · Fuldtidspersoner</div>
+<h1>Sygedagpenge <em>2025–2026</em></h1>
+<div class="sub">Fuldtidspersoner · Hvidovre + 5 benchmark · Seneste: marts 2026</div>
 </div>
 </div>
 <div class="container">
@@ -79,18 +85,18 @@ tr:hover td{background:rgba(46,125,84,.04)}
 <div class="toolbar">
 <button class="btn" onclick="toggleDark()">🌙 Toggle dark</button>
 <button class="btn" onclick="exportCSV()">⬇ CSV</button>
-<span class="date">Opdateret: maj 2026 · Kilde: Jobindsats API</span>
+<span class="date">Opdateret: maj 2026 · Jobindsats API</span>
 </div>
 
 <div class="card">
-<h2>Fuldtidspersoner på sygedagpenge <span class="hint">2026</span></h2>
-<p class="click-hint">👆 Klik på en kommune for at vise/skjule — Hvidovre er altid synlig</p>
+<h2>Fuldtidspersoner på sygedagpenge <span class="hint">Søjler · klik for at slå til/fra</span></h2>
+<p class="click-hint">👆 Klik på en kommune nedenfor for at vise/skjule — Hvidovre er altid synlig</p>
 <div class="kom-badges" id="komBadges"></div>
 <div class="chart-box"><canvas id="sygeChart"></canvas></div>
 </div>
 
 <div class="card">
-<h2>Data <span class="hint">Alle kommuner</span></h2>
+<h2>Data <span class="hint">Fuldtidspersoner pr. måned</span></h2>
 <div style="overflow-x:auto"><table><thead id="th-data"></thead><tbody id="tb-data"></tbody></table></div>
 </div>
 
@@ -106,45 +112,22 @@ tr:hover td{background:rgba(46,125,84,.04)}
 </div>
 
 <script>
-const DATA={};
-const MONTHS=["Jan","Feb","Mar"];
-const ALL=["Hvidovre","Brøndby","Rødovre","Ballerup","Gladsaxe","Herlev"];
 const CLR={"Hvidovre":"#1A4D2E","Brøndby":"#C0392B","Rødovre":"#C9973A","Ballerup":"#2E7D54","Gladsaxe":"#7B5EA7","Herlev":"#E8C06A"};
-const RAW={"Hvidovre":[791,788,759],"Brøndby":[566,559,524],"Rødovre":[558,546,496],"Ballerup":[856,859,806],"Gladsaxe":[782,791,734],"Herlev":[429,426,406]};
+const ALL=["Hvidovre","Brøndby","Rødovre","Ballerup","Gladsaxe","Herlev"];
+const ALL_LABELS=["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Aug","Sep","Okt","Nov","Dec","Jan","Feb","Mar"];
 
-// Build DATA object
-ALL.forEach(k=>{DATA[k]={}; MONTHS.forEach((m,i)=>{DATA[k][m]=RAW[k][i];})});
+const RAW={};
+ALL.forEach(k=>{RAW[k]=[];});
 
-// State: which communes are visible (Hvidovre always visible)
+RAW.Hvidovre=[844,862,868,811,767,752,730,711,724,762,756,771,791,788,759];
+RAW.Brøndby=[613,626,642,618,599,556,528,514,536,549,558,544,566,559,524];
+RAW.Rødovre=[585,582,607,592,583,562,526,500,526,544,573,585,558,546,496];
+RAW.Ballerup=[778,786,804,776,758,775,720,714,745,799,822,828,856,859,806];
+RAW.Gladsaxe=[890,876,836,806,792,792,757,746,759,792,791,803,782,791,734];
+RAW.Herlev=[427,429,452,460,443,420,385,380,400,418,426,425,429,426,406];
+
+// State
 let visible={...Object.fromEntries(ALL.map(k=>[k,true]))};
-// Hvidovre is locked visible
-let hvidovreLocked=true;
-
-// KPI
-const h=RAW.Hvidovre;
-const chg=h[2]-h[0];
-const pct=((chg/h[0])*100).toFixed(1);
-document.getElementById("kpiRow").innerHTML=
-`<div class="kpi-card"><div class="label">Jan 2026</div><div class="value">${h[0]}</div><div class="desc">Fuldtidspersoner</div></div>
-<div class="kpi-card gld"><div class="label">Mar 2026</div><div class="value">${h[2]}</div><div class="desc">Seneste måned</div></div>
-<div class="kpi-card ${chg<0?'red':''}"><div class="label">Ændring</div><div class="value">${chg<0?'':'-'}${Math.abs(chg)}</div><div class="change ${chg<0?'down':'up'}">${chg<0?'':'+'}${pct}%</div></div>
-<div class="kpi-card"><div class="label">Forskel til Brøndby</div><div class="value">${h[2]-RAW.Brøndby[2]}</div><div class="desc">Flere/ftr. i Hvidovre (mar)</div></div>`;
-
-// Build badges
-const badgeDiv=document.getElementById("komBadges");
-ALL.forEach(k=>{
-const b=document.createElement("button");
-b.className="kom-badge"+(k==="Hvidovre"?"":"");
-b.id="badge-"+k;
-b.style.borderColor=CLR[k];
-b.style.background=CLR[k]+"12";
-b.style.color=CLR[k];
-b.innerHTML=`<span class="dot" style="background:${CLR[k]}"></span>${k} <span class="check">${k==="Hvidovre"?"🔒":"✓"}</span>`;
-if(k!=="Hvidovre"){
-b.onclick=()=>toggleKom(k);
-}
-badgeDiv.appendChild(b);
-});
 
 function toggleKom(k){
 if(k==="Hvidovre")return;
@@ -161,52 +144,152 @@ updateChart();
 updateTable();
 }
 
-// Chart
+// Partition labels: 2025=0..11, 2026=12..14
+const idx2025=[0,1,2,3,4,5,6,7,8,9,10,11];
+const idx2026=[12,13,14];
+
 let chart=null;
 function updateChart(){
 const ds=[];
 ALL.forEach(k=>{
 if(!visible[k])return;
-const lk=k;
+const d=RAW[k];
 ds.push({
-label:lk,
-data:MONTHS.map(m=>DATA[lk][m]),
-borderColor:CLR[lk],
-backgroundColor:CLR[lk]+"1A",
-fill:true,
-tension:.3,
-pointRadius:lk==="Hvidovre"?5:4,
-borderWidth:lk==="Hvidovre"?3:2
+label:k+" 2025",
+data:idx2025.map(i=>d[i]),
+backgroundColor:CLR[k]+"99",
+borderColor:CLR[k],
+borderWidth:k==="Hvidovre"?2:1,
+order:k==="Hvidovre"?1:2,
+barPercentage:.9,
+categoryPercentage:.8
+});
+ds.push({
+label:k+" 2026",
+data:idx2026.map(i=>d[i]),
+backgroundColor:CLR[k],
+borderColor:CLR[k],
+borderWidth:k==="Hvidovre"?3:2,
+order:k==="Hvidovre"?1:2,
+barPercentage:.9,
+categoryPercentage:.8
 });
 });
+
+// Build custom x-axis: 2025 months then 2026 months
+const xLabels=ALL_LABELS;
+// Add a separator marker at index 12
+
 if(chart)chart.destroy();
-chart=new Chart(document.getElementById("sygeChart"),{type:"line",data:{labels:MONTHS,datasets:ds},options:{
+chart=new Chart(document.getElementById("sygeChart"),{type:"bar",data:{labels:xLabels,datasets:ds},options:{
 responsive:true,maintainAspectRatio:false,
-plugins:{legend:{position:"bottom",labels:{font:{family:"DM Sans",size:11},usePointStyle:true,filter:function(item){return visible[item.text];}}},
-tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw}`}}},
-scales:{x:{grid:{display:false},ticks:{font:{family:"DM Sans",size:10}}},
-y:{beginAtZero:false,grid:{color:"rgba(0,0,0,.05)"},ticks:{font:{family:"DM Sans",size:10}}}}}});
+plugins:{
+legend:{
+position:"bottom",
+labels:{
+font:{family:"DM Sans",size:10},
+usePointStyle:true,
+filter:function(item){
+const k=item.text.replace(" 2025","").replace(" 2026","");
+return visible[k];
+}
+}
+},
+tooltip:{
+callbacks:{
+title:function(ctx){
+const i=ctx[0].dataIndex;
+return i<12?"2025 – "+ALL_LABELS[i]:"2026 – "+ALL_LABELS[i];
+},
+label:function(ctx){
+return ctx.dataset.label+": "+ctx.raw+" fuldtidspersoner";
+}
+}
+}
+},
+scales:{
+x:{
+grid:{display:false},
+ticks:{
+font:{family:"DM Sans",size:9},
+maxRotation:45
+},
+afterBuildTicks:function(axis){
+// Add separator between 2025 and 2026
+}
+},
+y:{
+beginAtZero:false,
+grid:{color:"rgba(0,0,0,.05)"},
+ticks:{font:{family:"DM Sans",size:10}}
+}
+}
+}});
+
+// Draw separator line between dec 2025 and jan 2026
+const chartArea=chart.chartArea;
+if(chartArea){
+const meta=chart.getDatasetMeta(0);
+if(meta && meta.data && meta.data.length>11){
+const x1=meta.data[11].x;
+const x2=meta.data[12].x;
+const sepX=(x1+x2)/2;
+}
+}
 }
 
 // Table
 function updateTable(){
+const monthLabels=["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Aug","Sep","Okt","Nov","Dec","Jan","Feb","Mar"];
+const yearPrefix=["2025","2025","2025","2025","2025","2025","2025","2025","2025","2025","2025","2025","2026","2026","2026"];
 let th="<tr><th>Kommune</th>";
-MONTHS.forEach(m=>{th+=`<th>${m}</th>`;});
-th+="<th>Ændring</th></tr>";
+for(let i=0;i<15;i++){
+th+=`<th>${monthLabels[i]}<br><span style="font-weight:400;font-size:8px">${yearPrefix[i]}</span></th>`;
+}
+th+="<th>Ændring<br><span style=\"font-weight:400;font-size:8px\">2025→2026</span></th></tr>";
 document.getElementById("th-data").innerHTML=th;
 let tb="";
 ALL.forEach(k=>{
 if(!visible[k])return;
 const cls=k==="Hvidovre"?' class="highlight"':"";
-const vals=RAW[k];
+const d=RAW[k];
 tb+=`<tr${cls}><td>${k}</td>`;
-vals.forEach(v=>tb+=`<td>${v}</td>`);
-const c=vals[2]-vals[0], pp=((c/vals[0])*100).toFixed(1);
+for(let i=0;i<15;i++)tb+=`<td>${d[i]}</td>`;
+const c=d[14]-d[11]; // mar 2026 vs dec 2025
+const pp=((c/d[11])*100).toFixed(1);
 tb+=c<0?`<td class="pos">${c} (${pp}%)</td>`:`<td class="neg">+${c} (+${pp}%)</td>`;
 tb+="</tr>";
 });
 document.getElementById("tb-data").innerHTML=tb;
 }
+
+// KPI
+(function(){
+const h=RAW.Hvidovre;
+const jan25=h[0], dec25=h[11], mar26=h[14];
+const c=mar26-dec25;
+const pct=((c/dec25)*100).toFixed(1);
+document.getElementById("kpiRow").innerHTML=
+`<div class="kpi-card"><div class="label">Gns. 2025</div><div class="value">${Math.round(h.slice(0,12).reduce((a,b)=>a+b,0)/12)}</div><div class="desc">Fuldtidspersoner/mdr.</div></div>
+<div class="kpi-card gld"><div class="label">Mar 2026</div><div class="value">${mar26}</div><div class="desc">Seneste måned</div></div>
+<div class="kpi-card ${c<0?'red':''}"><div class="label">Dec 2025 → Mar 2026</div><div class="value">${c<0?'':'-'}${Math.abs(c)}</div><div class="change ${c<0?'down':'up'}">${c<0?'':'+'}${pct}%</div></div>
+<div class="kpi-card"><div class="label">Lavest i 2025</div><div class="value">${Math.min(...h.slice(0,12))}</div><div class="desc">${["Jul","Aug"][Math.min(...h.slice(0,12))===h[6]?0:1]} 2025</div></div>`;
+})();
+
+// Build badges
+ALL.forEach(k=>{
+const b=document.createElement("button");
+b.className="kom-badge";
+b.id="badge-"+k;
+b.style.borderColor=CLR[k];
+b.style.background=CLR[k]+"15";
+b.style.color=CLR[k];
+b.innerHTML=`<span class="dot" style="background:${CLR[k]}"></span>${k} <span class="check">${k==="Hvidovre"?"🔒":"✓"}</span>`;
+if(k!=="Hvidovre"){
+b.onclick=()=>toggleKom(k);
+}
+document.getElementById("komBadges").appendChild(b);
+});
 
 // Dark mode
 function toggleDark(){
@@ -216,31 +299,27 @@ d.getAttribute("data-theme")==="dark"?d.removeAttribute("data-theme"):d.setAttri
 
 // CSV
 function exportCSV(){
-let csv="Kommune;Jan;Feb;Mar;Ændring\n";
+let csv="Kommune;";
+for(let i=0;i<15;i++){
+const y=i<12?"2025":"2026";
+const m=["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Aug","Sep","Okt","Nov","Dec","Jan","Feb","Mar"][i];
+csv+=y+" "+m+";";
+}
+csv+="Ændring dec25→mar26\n";
 ALL.forEach(k=>{
 if(!visible[k])return;
-const v=RAW[k], c=v[2]-v[0];
-csv+=`${k};${v.join(";")};${c}\n`;
+const d=RAW[k];
+csv+=k+";"+d.join(";")+";"+(d[14]-d[11])+"\n";
 });
 const b=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
 const a=document.createElement("a");
-a.href=URL.createObjectURL(b);a.download="sygedagpenge_hvidovre_2026.csv";a.click();
+a.href=URL.createObjectURL(b);a.download="sygedagpenge_fuldtid_2025_2026.csv";a.click();
 }
 
 // Insights
 document.getElementById("insights").innerHTML=
-`<div class="insight" style="border-left:4px solid var(--green);background:rgba(46,125,84,.05);border-radius:var(--radius);padding:14px 18px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
-<div style="font-size:18px;flex-shrink:0;line-height:1.3">📉</div>
-<div><div style="font-weight:600;font-size:13px;margin-bottom:2px">Faldende tendens i Hvidovre</div>
-<div style="font-size:12px;color:var(--mid);line-height:1.5">Antallet af fuldtidspersoner på sygedagpenge i Hvidovre er faldet fra 791 i januar til 759 i marts 2026 — et fald på 32 personer (-4,0 %). Rødovre har det største relative fald (-11,1 %), mens Gladsaxe ligger stabilt.</div></div></div>
-<div class="insight" style="border-left:4px solid var(--gold);background:rgba(201,151,58,.06);border-radius:var(--radius);padding:14px 18px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
-<div style="font-size:18px;flex-shrink:0;line-height:1.3">📊</div>
-<div><div style="font-weight:600;font-size:13px;margin-bottom:2px">Ballerup har flest sygedagpengemodtagere</div>
-<div style="font-size:12px;color:var(--mid);line-height:1.5">Ballerup topper med 806 fuldtidspersoner i marts, efterfulgt af Gladsaxe (734) og Hvidovre (759). Herlev har færrest med 406. Brøndby ligger lavest blandt de større kommuner.</div></div></div>
-<div class="insight" style="border-left:4px solid var(--red);background:rgba(192,57,43,.05);border-radius:var(--radius);padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
-<div style="font-size:18px;flex-shrink:0;line-height:1.3">ℹ️</div>
-<div><div style="font-weight:600;font-size:13px;margin-bottom:2px">Data fra Jobindsats</div>
-<div style="font-size:12px;color:var(--mid);line-height:1.5">Tallene er hentet via Jobindsats API (tabel y07a02) og viser antal fuldtidspersoner på sygedagpenge. Fuldtidspersoner omregner delvist sygemeldte til fuldtidsekvivalenter. Data dækker jan-mar 2026.</div></div></div>`;
+`<div class="insight"><div class="i-icon">📉</div><div><div class="i-title">Sæsonudsving i 2025</div><div class="i-body">I Hvidovre toppede sygedagpengene i marts 2025 med 868 fuldtidspersoner og nåede bunden i august med 711 — et sæsonudsving på 157 personer (18 %). Det samme mønster ses i alle benchmark-kommuner: flest om vinteren/foråret, færrest om sommeren.</div></div></div>
+<div class="insight gld"><div class="i-icon">📊</div><div class="i-title">Størrelsesforhold mellem kommuner</div><div class="i-body">Gladsaxe har flest sygedagpengemodtagere (gns. 803 i 2025), efterfulgt af Hvidovre (782). Herlev har færrest (421). Brøndby ligger på niveau med Rødovre. Ballerup er steget markant fra december 2025 (828) til februar 2026 (859).</div></div></div>`;
 
 // Init
 updateChart();
